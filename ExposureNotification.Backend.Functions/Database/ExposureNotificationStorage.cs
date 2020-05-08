@@ -9,129 +9,129 @@ using Xamarin.ExposureNotifications;
 
 namespace ExposureNotification.Backend
 {
-	public class ExposureNotificationStorage
-	{
-		public ExposureNotificationStorage(
-			Action<DbContextOptionsBuilder> buildDbContextOpetions = null,
-			Action<DbContext> initializeDb = null)
-		{
-			var dbContextOptionsBuilder = new DbContextOptionsBuilder();
-			buildDbContextOpetions?.Invoke(dbContextOptionsBuilder);
-			dbContextOptions = dbContextOptionsBuilder.Options;
+    public class ExposureNotificationStorage : IExposureNotificationStorage
+    {
+        public ExposureNotificationStorage(
+            Action<DbContextOptionsBuilder> buildDbContextOpetions = null,
+            Action<DbContext> initializeDb = null)
+        {
+            var dbContextOptionsBuilder = new DbContextOptionsBuilder();
+            buildDbContextOpetions?.Invoke(dbContextOptionsBuilder);
+            dbContextOptions = dbContextOptionsBuilder.Options;
 
-			using (var ctx = new ExposureNotificationContext(dbContextOptions))
-				initializeDb?.Invoke(ctx);
-		}
+            using (var ctx = new ExposureNotificationContext(dbContextOptions))
+                initializeDb?.Invoke(ctx);
+        }
 
-		readonly DbContextOptions dbContextOptions;
+        readonly DbContextOptions dbContextOptions;
 
-		public async Task<KeysResponse> GetKeysAsync(ulong since, int skip = 0, int take = 1000)
-		{
-			using (var ctx = new ExposureNotificationContext(dbContextOptions))
-			{
-				var oldest = DateTimeOffset.UtcNow.AddDays(-14).ToUnixTimeSeconds();
-				
-				var results = await ctx.TemporaryExposureKeys.AsQueryable()
-					.Where(dtk => dtk.Id > since
-						&& dtk.TimestampSecondsSinceEpoch >= oldest)
-					.OrderBy(dtk => dtk.Id)
-					.Skip(skip)
-					.Take(take)
-					.ToListAsync().ConfigureAwait(false);
+        public async Task<KeysResponse> GetKeysAsync(Int64 since, int skip = 0, int take = 1000)
+        {
+            using (var ctx = new ExposureNotificationContext(dbContextOptions))
+            {
+                var oldest = DateTimeOffset.UtcNow.AddDays(-14).ToUnixTimeSeconds();
 
-				var newestIndex = results
-					.LastOrDefault()?.Id;
+                var results = await ctx.TemporaryExposureKeys.AsQueryable()
+                    .Where(dtk => dtk.Id > since
+                        && dtk.TimestampSecondsSinceEpoch >= oldest)
+                    .OrderBy(dtk => dtk.Id)
+                    .Skip(skip)
+                    .Take(take)
+                    .ToListAsync().ConfigureAwait(false);
 
-				var keys = results.Select(dtk => dtk.ToKey());
+                var newestIndex = results
+                    .LastOrDefault()?.Id;
 
-				return new KeysResponse
-				{
-					Latest = newestIndex ?? 0,
-					Keys = keys
-				};
-			}
-		}
+                var keys = results.Select(dtk => dtk.ToKey());
 
-		public void DeleteAllKeysAsync()
-		{
-			using (var ctx = new ExposureNotificationContext(dbContextOptions))
-			{
-				ctx.TemporaryExposureKeys.RemoveRange(ctx.TemporaryExposureKeys);
-				ctx.SaveChanges();
-			}
-		}
+                return new KeysResponse
+                {
+                    Latest = newestIndex ?? 0,
+                    Keys = keys
+                };
+            }
+        }
 
-		public async Task AddDiagnosisUidsAsync(IEnumerable<string> diagnosisUids)
-		{
-			using (var ctx = new ExposureNotificationContext(dbContextOptions))
-			{
-				foreach (var d in diagnosisUids)
-				{
-					if (!(await ctx.Diagnoses.AnyAsync(r => r.DiagnosisUid == d)))
-						ctx.Diagnoses.Add(new DbDiagnosis(d));
-				}
+        public void DeleteAllKeysAsync()
+        {
+            using (var ctx = new ExposureNotificationContext(dbContextOptions))
+            {
+                ctx.TemporaryExposureKeys.RemoveRange(ctx.TemporaryExposureKeys);
+                ctx.SaveChanges();
+            }
+        }
 
-				await ctx.SaveChangesAsync();
-			}
-		}
+        public async Task AddDiagnosisUidsAsync(IEnumerable<string> diagnosisUids)
+        {
+            using (var ctx = new ExposureNotificationContext(dbContextOptions))
+            {
+                foreach (var d in diagnosisUids)
+                {
+                    if (!(await ctx.Diagnoses.AnyAsync(r => r.DiagnosisUid == d)))
+                        ctx.Diagnoses.Add(new DbDiagnosis(d));
+                }
 
-		public async Task RemoveDiagnosisUidsAsync(IEnumerable<string> diagnosisUids)
-		{
-			using (var ctx = new ExposureNotificationContext(dbContextOptions))
-			{
-				var toRemove = new List<DbDiagnosis>();
+                await ctx.SaveChangesAsync();
+            }
+        }
 
-				foreach (var d in diagnosisUids)
-				{
-					var existingUid = await ctx.Diagnoses.FindAsync(d);
-					if (existingUid != null)
-						toRemove.Add(existingUid);
-				}
+        public async Task RemoveDiagnosisUidsAsync(IEnumerable<string> diagnosisUids)
+        {
+            using (var ctx = new ExposureNotificationContext(dbContextOptions))
+            {
+                var toRemove = new List<DbDiagnosis>();
 
-				ctx.Diagnoses.RemoveRange(toRemove);
-				await ctx.SaveChangesAsync();
-			}
-		}
+                foreach (var d in diagnosisUids)
+                {
+                    var existingUid = await ctx.Diagnoses.FindAsync(d);
+                    if (existingUid != null)
+                        toRemove.Add(existingUid);
+                }
 
-		public Task<bool> CheckIfDiagnosisUidExistsAsync(string diagnosisUid)
-		{
-			using (var ctx = new ExposureNotificationContext(dbContextOptions))
-				return Task.FromResult(ctx.Diagnoses.Any(d => d.DiagnosisUid.Equals(diagnosisUid)));
-		}
+                ctx.Diagnoses.RemoveRange(toRemove);
+                await ctx.SaveChangesAsync();
+            }
+        }
 
-		public async Task SubmitPositiveDiagnosisAsync(SelfDiagnosisSubmissionRequest diagnosis)
-		{
-			using (var ctx = new ExposureNotificationContext(dbContextOptions))
-			{
-				// Ensure the database contains the diagnosis uid
-				if (!ctx.Diagnoses.Any(d => d.DiagnosisUid == diagnosis.DiagnosisUid))
-					throw new InvalidOperationException();
+        public Task<bool> CheckIfDiagnosisUidExistsAsync(string diagnosisUid)
+        {
+            using (var ctx = new ExposureNotificationContext(dbContextOptions))
+                return Task.FromResult(ctx.Diagnoses.Any(d => d.DiagnosisUid.Equals(diagnosisUid)));
+        }
 
-				var dbKeys = diagnosis.Keys.Select(k => DbTemporaryExposureKey.FromKey(k)).ToList();
+        public async Task SubmitPositiveDiagnosisAsync(SelfDiagnosisSubmissionRequest diagnosis)
+        {
+            using (var ctx = new ExposureNotificationContext(dbContextOptions))
+            {
+                // Ensure the database contains the diagnosis uid
+                if (!ctx.Diagnoses.Any(d => d.DiagnosisUid == diagnosis.DiagnosisUid))
+                    throw new InvalidOperationException();
 
-				foreach (var dbk in dbKeys)
-					ctx.TemporaryExposureKeys.Add(dbk);
+                var dbKeys = diagnosis.Keys.Select(k => DbTemporaryExposureKey.FromKey(k)).ToList();
 
-				await ctx.SaveChangesAsync();
-			}
-		}
+                foreach (var dbk in dbKeys)
+                    ctx.TemporaryExposureKeys.Add(dbk);
 
-		public class SelfDiagnosisSubmissionRequest
-		{
-			[JsonProperty("diagnosisUid")]
-			public string DiagnosisUid { get; set; }
+                await ctx.SaveChangesAsync();
+            }
+        }
 
-			[JsonProperty("keys")]
-			public IEnumerable<TemporaryExposureKey> Keys { get; set; }
-		}
+        public class SelfDiagnosisSubmissionRequest
+        {
+            [JsonProperty("diagnosisUid")]
+            public string DiagnosisUid { get; set; }
 
-		public class KeysResponse
-		{
-			[JsonProperty("latest")]
-			public ulong Latest { get; set; }
+            [JsonProperty("keys")]
+            public IEnumerable<TemporaryExposureKey> Keys { get; set; }
+        }
 
-			[JsonProperty("keys")]
-			public IEnumerable<TemporaryExposureKey> Keys { get; set; }
-		}
-	}
+        public class KeysResponse
+        {
+            [JsonProperty("latest")]
+            public Int64 Latest { get; set; }
+
+            [JsonProperty("keys")]
+            public IEnumerable<TemporaryExposureKey> Keys { get; set; }
+        }
+    }
 }

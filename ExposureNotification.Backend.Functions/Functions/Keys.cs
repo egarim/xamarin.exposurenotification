@@ -16,7 +16,7 @@ namespace ExposureNotification.Backend.Functions
 		public async Task<IActionResult> Run(
 			[HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "keys")] HttpRequest req)
 		{
-			if (!ulong.TryParse(req.Query?["since"], out var since))
+			if (!Int64.TryParse(req.Query?["since"], out var since))
 				since = 0;
 
 			if (!int.TryParse(req.Query?["skip"], out var skip))

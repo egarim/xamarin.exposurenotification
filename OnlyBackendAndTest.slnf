@@ -1,0 +1,9 @@
+{
+  "solution": {
+    "path": "ExposureNotification.sln",
+    "projects": [
+      "ExposureNotification.Backend.Functions\\ExposureNotification.Backend.Functions.csproj",
+      "ExposureNotification.Tests\\ExposureNotification.Tests.csproj"
+    ]
+  }
+}

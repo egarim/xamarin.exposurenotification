@@ -1,24 +1,30 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using DevExpress.Xpo;
 using Xamarin.ExposureNotifications;
 
 namespace ExposureNotification.Backend
 {
-	class DbTemporaryExposureKey
+	[Persistent("DbTemporaryExposureKey")]
+	public class DbTemporaryExposureKey
 	{
-		[Key, Column(Order = 0)]
+		[DevExpress.Xpo.Key(true)]
+		[System.ComponentModel.DataAnnotations.Key, Column(Order = 0)]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		public ulong Id { get; set; }
+		public Int64 Id { get; set; }
 
+		//TODO Jm check the real size
+		[Persistent(nameof(Base64KeyData)), Size(300)]
 		public string Base64KeyData { get; set; }
 
+		[Persistent(nameof(TimestampSecondsSinceEpoch))]
 		public long TimestampSecondsSinceEpoch { get; set; }
-
+		[Persistent(nameof(RollingStartSecondsSinceEpoch))]
 		public long RollingStartSecondsSinceEpoch { get; set; }
-
+		[Persistent(nameof(RollingDuration))]
 		public int RollingDuration { get; set; }
-
+		[Persistent(nameof(TransmissionRiskLevel))]
 		public int TransmissionRiskLevel { get; set; }
 
 		public TemporaryExposureKey ToKey()

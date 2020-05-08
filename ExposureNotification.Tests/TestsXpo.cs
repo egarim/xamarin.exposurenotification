@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Xunit;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
@@ -6,19 +6,28 @@ using System.Collections.Generic;
 using System.Linq;
 using Xamarin.ExposureNotifications;
 using ExposureNotification.Backend;
+using ExposureNotification.Backend.Functions.Xpo;
+using DevExpress.Xpo.DB;
 
 namespace ExposureNotification.Tests
 {
-	public class Tests
+	public class TestsXpo
 	{
-		public Tests()
+		public TestsXpo()
 		{
-			Storage = new ExposureNotificationStorage(
-				builder => builder.UseInMemoryDatabase("Tests"),
-				initialize => initialize.Database.EnsureCreated());
+			//Storage = new ExposureNotificationStorage(
+			//	builder => builder.UseInMemoryDatabase("Tests"),
+			//	initialize => initialize.Database.EnsureCreated());
+			//XpoProvider=MSSqlServer;Data Source=(local);User ID=username;Password=password;Initial Catalog=database;Persist Security Info=true
+
+			//Storage = new XpoExposureNotificationStorage("XpoProvider=MSSqlServer;Data Source=DESKTOP-D0MDBF3;User ID=sa;Password=123;Initial Catalog=XpoStorage;Persist Security Info=true");
+			//Storage = new XpoExposureNotificationStorage(InMemoryDataStore.GetConnectionStringInMemory(true));
+
+			Storage = new XpoExposureNotificationStorage(InMemoryDataStore.GetConnectionString("Data.xml"));
+
 		}
 
-		public ExposureNotificationStorage Storage { get; }
+		public IExposureNotificationStorage Storage { get; }
 
 		[Fact]
 		public async Task Add_Keys_Test()

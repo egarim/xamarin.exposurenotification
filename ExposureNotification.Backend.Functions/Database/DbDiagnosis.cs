@@ -1,13 +1,20 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using DevExpress.Xpo;
 
 namespace ExposureNotification.Backend
 {
-	class DbDiagnosis
+	[Persistent("DbDiagnosis")]
+	public class DbDiagnosis
 	{
-		public DbDiagnosis(string diagnosisUid)
+        public DbDiagnosis()
+        {
+        }
+
+        public DbDiagnosis(string diagnosisUid)
 			=> DiagnosisUid = diagnosisUid;
 
-		[Key]
+		[System.ComponentModel.DataAnnotations.Key]
+		[DevExpress.Xpo.Key(false)]
 		public string DiagnosisUid { get; set; }
 	}
 }
