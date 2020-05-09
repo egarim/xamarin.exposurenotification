@@ -27,21 +27,25 @@ namespace ExposureNotification.Backend
 		[Persistent(nameof(TransmissionRiskLevel))]
 		public int TransmissionRiskLevel { get; set; }
 
-		public TemporaryExposureKey ToKey()
-			=> new TemporaryExposureKey(
-				Convert.FromBase64String(Base64KeyData),
-				DateTimeOffset.FromUnixTimeSeconds(RollingStartSecondsSinceEpoch),
-				TimeSpan.FromMinutes(RollingDuration),
-				(RiskLevel)TransmissionRiskLevel);
+        public TemporaryExposureKey ToKey()
+        {
+            return new TemporaryExposureKey(
+                Convert.FromBase64String(Base64KeyData),
+                DateTimeOffset.FromUnixTimeSeconds(RollingStartSecondsSinceEpoch),
+                TimeSpan.FromMinutes(RollingDuration),
+                (RiskLevel)TransmissionRiskLevel);
+        }
 
-		public static DbTemporaryExposureKey FromKey(TemporaryExposureKey key)
-			=> new DbTemporaryExposureKey
-			{
-				Base64KeyData = Convert.ToBase64String(key.KeyData),
-				TimestampSecondsSinceEpoch = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-				RollingStartSecondsSinceEpoch = key.RollingStart.ToUnixTimeSeconds(),
-				RollingDuration = (int)key.RollingDuration.TotalMinutes,
-				TransmissionRiskLevel = (int)key.TransmissionRiskLevel
-			};
-	}
+        public static DbTemporaryExposureKey FromKey(TemporaryExposureKey key)
+        {
+            return new DbTemporaryExposureKey
+            {
+                Base64KeyData = Convert.ToBase64String(key.KeyData),
+                TimestampSecondsSinceEpoch = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                RollingStartSecondsSinceEpoch = key.RollingStart.ToUnixTimeSeconds(),
+                RollingDuration = (int)key.RollingDuration.TotalMinutes,
+                TransmissionRiskLevel = (int)key.TransmissionRiskLevel
+            };
+        }
+    }
 }
