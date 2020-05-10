@@ -3,18 +3,26 @@ using DevExpress.Xpo;
 
 namespace ExposureNotification.Backend
 {
-	[Persistent("DbDiagnosis")]
-	public class DbDiagnosis
-	{
+    [Persistent("DbDiagnosis")]
+    public class DbDiagnosis 
+    {
         public DbDiagnosis()
         {
         }
 
         public DbDiagnosis(string diagnosisUid)
-			=> DiagnosisUid = diagnosisUid;
+            => DiagnosisUid = diagnosisUid;
 
-		[System.ComponentModel.DataAnnotations.Key]
-		[DevExpress.Xpo.Key(false)]
-		public string DiagnosisUid { get; set; }
-	}
+        [System.ComponentModel.DataAnnotations.Key]
+        [DevExpress.Xpo.Key(false)]
+        public string DiagnosisUid { get; set; }
+
+
+        [NonPersistent]
+        public string DiagnosisOid
+        {
+            get => DiagnosisUid;
+
+        }
+    }
 }

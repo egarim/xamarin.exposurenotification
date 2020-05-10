@@ -1,15 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Xamarin.ExposureNotifications;
 
 namespace ExposureNotification.Backend
 {
-    public class ExposureNotificationStorage : IExposureNotificationStorage
+    public partial class ExposureNotificationStorage : IExposureNotificationStorage
     {
         public ExposureNotificationStorage(
             Action<DbContextOptionsBuilder> buildDbContextOpetions = null,
@@ -114,24 +112,6 @@ namespace ExposureNotification.Backend
 
                 await ctx.SaveChangesAsync();
             }
-        }
-
-        public class SelfDiagnosisSubmissionRequest
-        {
-            [JsonProperty("diagnosisUid")]
-            public string DiagnosisUid { get; set; }
-
-            [JsonProperty("keys")]
-            public IEnumerable<TemporaryExposureKey> Keys { get; set; }
-        }
-
-        public class KeysResponse
-        {
-            [JsonProperty("latest")]
-            public Int64 Latest { get; set; }
-
-            [JsonProperty("keys")]
-            public IEnumerable<TemporaryExposureKey> Keys { get; set; }
         }
     }
 }

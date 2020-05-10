@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<license id="ed8648aa-d6db-42ca-896e-af851bf916f3" expiration="2020-11-17T00:00:00.0000000" MainEmail="dev@xari.io" Oid="802cc5d6-4ec2-4e8f-9b50-10947cda316f" Country="US" State="AZ" City="Phoenix" Full_Name="Jose Columbie" Address="6900 E Princess Dr Unit 2186" Zip="85054">
+  <componentId>BIT.Xpo.XPOWebApi.Server</componentId>
+  <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+    <SignedInfo>
+      <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+      <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" />
+      <Reference URI="">
+        <Transforms>
+          <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+        </Transforms>
+        <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <DigestValue>F8mPIiEnQfKFCkce8Vkq9v2Uls0=</DigestValue>
+      </Reference>
+    </SignedInfo>
+    <SignatureValue>B/vz4QLkMXTV+UNBb5ytu3I3faS1FZ9LOuOis6qc9EIe1OLGZBBeFA/GYIVgrDLiO6GvMMaI/gR2DCV33YzBemvlHsT8rKTl9+Kp0Jw0ss/aNnM6J91nF0X1qnHVmFh5TbybudzjSYOYQY3BWFc6EHZd3y4b/pYMAXlt9IisWp3E4vZXyvg4dyAvXzcqfaJGoyb27uGbXEfo9SzeM6vQAF0E3oBnlkPupvL0RtzVsKPh31cA7mVWlIPgUNvvLgZta3FmzaHV/EOUHjq/XUk8oubrAQF9Ifh+oTBhaLIoTa8LlrROcnFywz8t5Pt+ZOOt2J1wUvYD1XIRH/SCYO9Dgg==</SignatureValue>
+  </Signature>
+</license>

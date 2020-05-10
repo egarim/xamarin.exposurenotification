@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using DevExpress.Data.Filtering;
 using DevExpress.Xpo;
-using static ExposureNotification.Backend.ExposureNotificationStorage;
 
 namespace ExposureNotification.Backend.Functions.Xpo
 {
@@ -62,7 +61,7 @@ namespace ExposureNotification.Backend.Functions.Xpo
             }
         }
 
-        public async Task<ExposureNotificationStorage.KeysResponse> GetKeysAsync(Int64 since, int skip = 0, int take = 1000)
+        public async Task<KeysResponse> GetKeysAsync(Int64 since, int skip = 0, int take = 1000)
         {
             using(var UoW = XpoHelper.CreateUnitOfWork())
             {
@@ -110,7 +109,7 @@ namespace ExposureNotification.Backend.Functions.Xpo
             }
         }
 
-        public async Task SubmitPositiveDiagnosisAsync(ExposureNotificationStorage.SelfDiagnosisSubmissionRequest diagnosis)
+        public async Task SubmitPositiveDiagnosisAsync(SelfDiagnosisSubmissionRequest diagnosis)
         {
             using (var UoW = XpoHelper.CreateUnitOfWork())
             {

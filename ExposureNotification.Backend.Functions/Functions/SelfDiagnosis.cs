@@ -30,7 +30,7 @@ namespace ExposureNotification.Backend.Functions
 			// Submit a self diagnosis after verifying
 			else if (req.Method.Equals("put", StringComparison.OrdinalIgnoreCase))
 			{
-				var diagnosis = JsonConvert.DeserializeObject<ExposureNotificationStorage.SelfDiagnosisSubmissionRequest>(requestBody);
+				var diagnosis = JsonConvert.DeserializeObject<SelfDiagnosisSubmissionRequest>(requestBody);
 
 				await Startup.Database.SubmitPositiveDiagnosisAsync(diagnosis);
 			}
